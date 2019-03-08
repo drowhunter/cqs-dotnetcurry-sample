@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Cqs.CoreSampleLib.Cqs.Data;
+using Cqs.CoreSampleLib.Domain;
 
 namespace Cqs.CoreConsole.Requests.Queries.Books
 {

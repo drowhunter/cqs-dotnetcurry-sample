@@ -1,11 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Cqs.CoreSampleLib.Cqs;
+using Cqs.CoreSampleLib.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Cqs.CoreConsole.Requests.Queries.Books
 {
     public class GetBooksQueryHandler : QueryHandler<GetBooksQuery, GetBooksQueryResult>
     {
-        public GetBooksQueryHandler(ApplicationDbContext applicationDbContext) 
-            : base(applicationDbContext)
+        public GetBooksQueryHandler(ApplicationDbContext applicationDbContext, ILogger<GetBooksQueryHandler> logger) 
+            : base(applicationDbContext, logger)
         {
         }
 

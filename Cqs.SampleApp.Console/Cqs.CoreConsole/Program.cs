@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Cqs.CoreConsole.Requests.Commands;
 using Cqs.CoreConsole.Requests.Queries.Books;
 using Cqs.CoreSampleLib.Cqs;

@@ -1,4 +1,7 @@
-﻿namespace Cqs.CoreConsole.Requests.Commands
+﻿using Cqs.CoreSampleLib.Cqs.Data;
+using Cqs.CoreSampleLib.Domain;
+
+namespace Cqs.CoreConsole.Requests.Commands
 {
     public class SaveBookCommand : Command
     {

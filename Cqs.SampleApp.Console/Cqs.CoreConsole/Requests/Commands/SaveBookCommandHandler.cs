@@ -1,10 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Cqs.CoreSampleLib.Constants;
+using Cqs.CoreSampleLib.Cqs;
+using Cqs.CoreSampleLib.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Cqs.CoreConsole.Requests.Commands
 {
     public class SaveBookCommandHandler : CommandHandler<SaveBookCommand, SaveBookCommandResult>
     {
-        public SaveBookCommandHandler(ApplicationDbContext context) : base(context)
+        public SaveBookCommandHandler(ApplicationDbContext context, ILogger<SaveBookCommandHandler> logger) : base(context,logger)
         {
         }
 
