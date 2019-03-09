@@ -20,7 +20,7 @@ namespace Cqs.CoreSampleLib.Cqs
         {
             //Look up the correct QueryHandler in our IoC container and invoke the retrieve method
 
-            var _handler = _services.GetService<IQueryHandler<TParameter, TResult>>();
+            var _handler = _services.GetRequiredService<IQueryHandler<TParameter, TResult>>();
             return _handler.Retrieve(query);
         }
 
@@ -30,7 +30,7 @@ namespace Cqs.CoreSampleLib.Cqs
         { 
             //Look up the correct QueryHandler in our IoC container and invoke the retrieve method
 
-            var _handler = _services.GetService<IQueryHandler<TParameter, TResult>>();
+            var _handler = _services.GetRequiredService<IQueryHandler<TParameter, TResult>>();
             return await _handler.RetrieveAsync(query);
         }
     }

@@ -17,46 +17,59 @@ namespace Cqs.CoreConsole
         private static ILogger<Program> _logger;
         static void Main(string[] args)
         {
-            var serviceCollection = new ServiceCollection()
-                .AddDbContext<ApplicationDbContext>(options =>
-                {
-                    var connectionString = @"Data Source=(localdb)\MSSQLLocalDB; Database=cqs_books_test; Trusted_Connection=True;MultipleActiveResultSets=true";// Configuration.GetConnectionString("DefaultConnection");
-                    options.UseSqlServer(connectionString);
-                    options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
-                })
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
 
+            UseServices(serviceCollection.BuildServiceProvider());
 
-                .AddScoped<IQueryDispatcher, QueryDispatcher>()
-                .AddScoped<ICommandDispatcher, CommandDispatcher>()
+            Console.ReadKey();
 
-                .AddLogging(builder => builder.AddConsole());
-
-            serviceCollection.Scan(scan =>
+        }
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
-                scan.FromAssemblyOf<ApplicationDbContext>()
-                    .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
+                var connectionString = @"Data Source=(localdb)\MSSQLLocalDB; Database=cqs_books_test; Trusted_Connection=True;MultipleActiveResultSets=true";// Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+                options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+            });
+            services.AddLogging(configure => configure.AddConsole());//.AddTransient<Program>();
+            //services.AddLogging(builder => builder.AddConsole());
+            services.AddScoped<IQueryDispatcher, QueryDispatcher>();
+            services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+            //.AddScoped(typeof(IQueryHandler<,>),typeof(GetBooksQueryHandler))
+            //.AddScoped(typeof(ICommandHandler<,>),typeof(SaveBookCommandHandler))
+            //.AddScoped(typeof(IQueryHandler<,>), provider =>
+            //{
+            //    provider.GetService()
+            //}) 
+
+            
+            services.Scan(scan =>
+            {
+                var serviceTypeSelector = scan.FromAssemblyOf<GetBooksQueryHandler>()
+                    .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)));
+                serviceTypeSelector
                     .AsImplementedInterfaces()
                     .WithScopedLifetime();
             });
-            serviceCollection.Scan(scan =>
+            services.Scan(scan =>
             {
-                scan.FromAssemblyOf<ApplicationDbContext>()
+                scan.FromAssemblyOf<SaveBookCommandHandler>()
                     .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<,>)))
                     .AsImplementedInterfaces()
                     .WithScopedLifetime();
             });
+        }
 
-            var serviceProvider= serviceCollection.BuildServiceProvider();
-            
 
-            var logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Program>();
+        private static void UseServices(ServiceProvider service)
+        {
+            _logger = service.GetRequiredService<ILogger<Program>>();
 
-            logger.LogDebug("Bootsrapping Application");
+            _logger.LogDebug("Bootsrapping Application");
 
-            WithCqsAsync(serviceProvider);
-
-            Console.ReadKey();
-
+            WithCqsAsync(service);
         }
 
         private static async void WithCqsAsync(IServiceProvider service)
